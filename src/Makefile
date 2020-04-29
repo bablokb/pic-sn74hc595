@@ -14,6 +14,6 @@ MODEL=12f675
 ARCH=pic14
 SDCC_ARGS=-DSO_BYTE
 
-include ../rules.inc
+include rules.inc
 
 # --------------------------------------------------------------------------

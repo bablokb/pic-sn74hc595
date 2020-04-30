@@ -5,10 +5,10 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "SN74HC595 Debugger for PICs"
-Date "2020-04-18"
-Rev "1"
+Date "2020-04-30"
+Rev "2"
 Comp "Bernhard Bablok"
-Comment1 "https://github.com/bablokb/pic-toolchain/src/sn74hc595_dbg"
+Comment1 "https://github.com/bablokb/pic-sn74hc595"
 Comment2 ""
 Comment3 ""
 Comment4 ""
@@ -24,10 +24,6 @@ F 3 "http://www.ti.com/lit/ds/symlink/sn74hc595.pdf" H 4450 3150 50  0001 C CNN
 	1    4450 3150
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	4050 3250 3900 3250
-Wire Wire Line
-	3900 3250 3900 2950
 Wire Wire Line
 	3900 2950 4050 2950
 $Comp
@@ -92,12 +88,12 @@ $EndComp
 Wire Wire Line
 	3900 3850 4150 3850
 $Comp
-L Connector_Generic:Conn_01x04 J1
+L Connector_Generic:Conn_01x05 J1
 U 1 1 5E9B758D
 P 2600 2000
 F 0 "J1" H 2518 1575 50  0000 C CNN
-F 1 "Conn_01x04" H 2518 1666 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 2600 2000 50  0001 C CNN
+F 1 "Conn_01x05" H 2518 1666 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical" H 2600 2000 50  0001 C CNN
 F 3 "~" H 2600 2000 50  0001 C CNN
 	1    2600 2000
 	-1   0    0    1   
@@ -106,7 +102,6 @@ Wire Wire Line
 	2800 1900 4050 1900
 Wire Wire Line
 	3900 2000 2800 2000
-Connection ~ 3900 2950
 Connection ~ 3350 1800
 Wire Wire Line
 	2800 1800 3000 1800
@@ -124,9 +119,6 @@ $EndComp
 Wire Wire Line
 	2400 2550 2800 2550
 Wire Wire Line
-	2800 2100 2800 2550
-Connection ~ 2800 2550
-Wire Wire Line
 	2800 2550 2800 2600
 Wire Wire Line
 	3900 3350 3900 3850
@@ -139,12 +131,12 @@ Connection ~ 3000 1800
 Wire Wire Line
 	3000 1800 3350 1800
 $Comp
-L Connector_Generic:Conn_01x04 J2
+L Connector_Generic:Conn_01x05 J2
 U 1 1 5E9C427F
 P 5550 2000
 F 0 "J2" H 5468 1575 50  0000 C CNN
-F 1 "Conn_01x04" H 5468 1666 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 5550 2000 50  0001 C CNN
+F 1 "Conn_01x05" H 5468 1666 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical" H 5550 2000 50  0001 C CNN
 F 3 "~" H 5550 2000 50  0001 C CNN
 	1    5550 2000
 	1    0    0    1   
@@ -161,15 +153,11 @@ F 3 "" H 5250 2350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5350 2100 5250 2100
-Wire Wire Line
-	5250 2100 5250 2350
-Wire Wire Line
 	3350 1800 4450 1800
 Wire Wire Line
 	4050 1900 4050 2750
 Wire Wire Line
-	3900 2000 3900 2950
+	3900 2000 3900 2650
 Wire Wire Line
 	3900 2000 5350 2000
 Connection ~ 3900 2000
@@ -268,19 +256,13 @@ F 3 "~" H 5800 2550 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	4850 2750 5400 2750
-Wire Wire Line
 	5400 2750 5400 2550
 Wire Wire Line
 	5400 2550 5650 2550
 Wire Wire Line
-	4850 2850 5500 2850
-Wire Wire Line
 	5500 2850 5500 2800
 Wire Wire Line
 	5500 2800 5650 2800
-Wire Wire Line
-	4850 2950 5500 2950
 Wire Wire Line
 	5500 2950 5500 3050
 Wire Wire Line
@@ -290,13 +272,9 @@ Wire Wire Line
 Wire Wire Line
 	5400 3050 5400 3300
 Wire Wire Line
-	5400 3300 5650 3300
-Wire Wire Line
 	4850 3150 5350 3150
 Wire Wire Line
 	5350 3150 5350 3550
-Wire Wire Line
-	5350 3550 5650 3550
 Wire Wire Line
 	4850 3250 5250 3250
 Wire Wire Line
@@ -320,7 +298,7 @@ L Device:R_Network08 RN1
 U 1 1 5E9E3741
 P 6550 3500
 F 0 "RN1" V 5933 3500 50  0000 C CNN
-F 1 "R_Network08" V 6024 3500 50  0000 C CNN
+F 1 "680" V 6024 3500 50  0000 C CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 7025 3500 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 6550 3500 50  0001 C CNN
 	1    6550 3500
@@ -387,10 +365,10 @@ F 3 "" H 7000 3100 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	6750 3100 7000 3100
-Text Notes 2500 2150 2    63   ~ 0
-Vin\nSERin\nCLKin\nGND
-Text Notes 5650 2150 0    63   ~ 0
-Vout\nSERout\nCLKout\nGND
+Text Notes 2500 2250 2    63   ~ 0
+Vin\nSERin\nSCLKin\nRCLKin\nGND
+Text Notes 5650 2250 0    63   ~ 0
+Vout\nSERout\nSCLKout\nRCLKout\nGND
 Wire Wire Line
 	3600 3050 4050 3050
 Wire Wire Line
@@ -398,4 +376,94 @@ Wire Wire Line
 Connection ~ 4450 1800
 Wire Wire Line
 	4450 1800 5350 1800
+Wire Wire Line
+	2800 2550 2800 2200
+Connection ~ 2800 2550
+Wire Wire Line
+	5250 2350 5250 2200
+Wire Wire Line
+	5250 2200 5350 2200
+Wire Wire Line
+	2800 2100 3750 2100
+Wire Wire Line
+	3750 3250 3750 2750
+Wire Wire Line
+	3750 3250 4050 3250
+Connection ~ 3750 2100
+Wire Wire Line
+	3750 2100 5350 2100
+$Comp
+L Connector:Conn_01x02_Male J3
+U 1 1 5EAB5239
+P 3450 2650
+F 0 "J3" H 3350 2600 50  0000 C CNN
+F 1 "Jumper" H 3350 2500 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3450 2650 50  0001 C CNN
+F 3 "~" H 3450 2650 50  0001 C CNN
+	1    3450 2650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3650 2750 3750 2750
+Connection ~ 3750 2750
+Wire Wire Line
+	3750 2750 3750 2100
+Wire Wire Line
+	3650 2650 3900 2650
+Connection ~ 3900 2650
+Wire Wire Line
+	3900 2650 3900 2950
+$Comp
+L Connector:Conn_01x08_Male J4
+U 1 1 5EABABB9
+P 5450 4800
+F 0 "J4" V 5377 4728 50  0000 C CNN
+F 1 "Conn_01x08_Male" V 5286 4728 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" H 5450 4800 50  0001 C CNN
+F 3 "~" H 5450 4800 50  0001 C CNN
+	1    5450 4800
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5350 3550 5650 3550
+Wire Wire Line
+	5400 3300 5650 3300
+Wire Wire Line
+	4850 2950 5500 2950
+Wire Wire Line
+	4850 2850 5500 2850
+Wire Wire Line
+	4850 2750 5400 2750
+Text Label 4850 2750 0    50   ~ 0
+QA
+Text Label 4850 2850 0    50   ~ 0
+QB
+Text Label 4850 2950 0    50   ~ 0
+QC
+Text Label 4850 3050 0    50   ~ 0
+QD
+Text Label 4850 3150 0    50   ~ 0
+QE
+Text Label 4850 3250 0    50   ~ 0
+QF
+Text Label 4850 3350 0    50   ~ 0
+QG
+Text Label 4850 3450 0    50   ~ 0
+QH
+Text Label 5150 4600 1    50   ~ 0
+QA
+Text Label 5250 4600 1    50   ~ 0
+QB
+Text Label 5350 4600 1    50   ~ 0
+QC
+Text Label 5450 4600 1    50   ~ 0
+QD
+Text Label 5550 4600 1    50   ~ 0
+QE
+Text Label 5650 4600 1    50   ~ 0
+QF
+Text Label 5750 4600 1    50   ~ 0
+QG
+Text Label 5850 4600 1    50   ~ 0
+QH
 $EndSCHEMATC

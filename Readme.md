@@ -1,7 +1,7 @@
 SN74HC595 based debugger for the PIC12F675
 ==========================================
 
-This example provides a simple "debugger" based on the SN74HC595
+This project provides a simple "debugger" based on the SN74HC595
 shift-register. In this scenario the pic needs two GPs to clock out
 data to the shift-register IC. Connecting eight leds to the IC you
 can display whole bits. If you chain two 595 together, you can display

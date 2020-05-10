@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------
-// Sample project sn74hc595_dbg
+// SN74HC595 based debugger for the PIC12F675
 //
 // A simple SN74HC595-based "debugger" which only uses two pins to shift-out
 // 8 or 16 bits. Connected to the SN74HC595 are LEDs to display the data.

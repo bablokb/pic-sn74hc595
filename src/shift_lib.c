@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------
-// Sample project sn74hc595_dbg
+// SN74HC595 based debugger for the PIC12F675
 //
 // Author: Bernhard Bablok
 // https://github.com/bablokb/pic-sn74hc595

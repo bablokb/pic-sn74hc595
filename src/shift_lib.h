@@ -2,7 +2,7 @@
 // Sample project sn74hc595_dbg
 //
 // Author: Bernhard Bablok
-// https://github.com/bablokb/pic-toolchain/src/sn74hc595_dbg
+// https://github.com/bablokb/pic-sn74hc595
 //
 // --------------------------------------------------------------------------
 

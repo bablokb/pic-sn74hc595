@@ -4,7 +4,7 @@
 ; Definition of delay-functions
 ; 
 ; Author: B-bablok
-; https://github.com/bablokb/pic-toolchain/src/sn74hc595_dbg
+; https://github.com/bablokb/pic-sn74hc595
 ;
 ; --------------------------------------------------------------------------
 #include   <p12f675.inc>

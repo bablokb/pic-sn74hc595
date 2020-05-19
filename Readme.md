@@ -17,3 +17,11 @@ in total. With two connected 595-ICs, the pic sends 17 bits.
 The example program waits for a button-press on GP5 and then displays
 and increasing counter. It stops again once the counter wraps around to
 zero or if the button is pressed again.
+
+![](pcb.jpg)
+
+The KiCAD source of the pcb is in the directory `sn74hc595_dbg.kicad`. The
+library and the example application is in the directory `src`. Note that
+you need sdcc and gputils to compile and link the files, but porting
+to a different toolchain should be simple.
+

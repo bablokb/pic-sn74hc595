@@ -25,7 +25,7 @@ void so_byte(uint8_t data) {
   uint8_t i = 0;
 
   // write data to shift-register
-  for (i=0;i<8;i++) {
+  for (i=7;i<255;i--) {
     PIN_DATA = ((data>>i)&0x1);   // write bit value
     PIN_CLK  = 1;                 // toggle clock pin
     PIN_CLK  = 0;
@@ -44,7 +44,7 @@ void so_addr(uint16_t data) {
   uint8_t i = 0;
 
   // write data to shift-register
-  for (i=0;i<16;i++) {
+  for (i=16;i<255;i--) {
     PIN_DATA = ((data>>i)&0x1);   // write bit value
     PIN_CLK  = 1;                 // toggle clock pin
     PIN_CLK  = 0;

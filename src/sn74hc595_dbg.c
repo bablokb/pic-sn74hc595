@@ -9,6 +9,9 @@
 // all values from 1 to 255. When pressed again or when the counter wraps
 // around to zero, the counting stops again.
 //
+// If you chain two SN74HC595 together and #define SO_ADDR instead of
+// SO_BYTE, the sample program will output ~counter,counter.
+//
 // Author: Bernhard Bablok
 // https://github.com/bablokb/pic-sn74hc595
 //
@@ -24,14 +27,20 @@
 // build with:
 // make build
 
+static union {
+  uint16_t addr;
+  struct {
+    uint8_t byte1;
+    uint8_t byte2;
+  } counter;
+} d;
+
 // MCLR on, Power on Timer, no WDT, int-oscillator, 
 // no brown out
 
 __code uint16_t __at (_CONFIG) __configword = 
   _MCLRE_ON & _PWRTE_ON & _WDT_OFF & _INTRC_OSC_NOCLKOUT & _BODEN_OFF;
 
-
-static uint8_t counter  = 0;
 
 ////////////////////////////////////////////////////////////////////////
 // Intialize registers
@@ -62,10 +71,10 @@ static void isr(void) __interrupt 0 {
   if (INTCONbits.GPIF) {                  // interrupt-on-change
     // just wait a bit to debounce
     delay_ms(250);
-    if (counter) {   // active: stop counting
-      counter = 0;
+    if (d.counter.byte1) {   // active: stop counting
+      d.counter.byte1 = 0;
     } else {         // waiting: start counting
-      counter = 1;
+      d.counter.byte1 = 1;
     }
     INTCONbits.GPIF = 0;                  // clear IOC interrupt flag
   }
@@ -82,16 +91,27 @@ void main(void) {
     bcf  STATUS, RP0
   __endasm;
 
+  d.addr = 0;
   init();
   so_init();
-  so_byte(0x0F);                            // 0000 1111
+#ifdef SO_BYTE
+  so_byte(0x0F);      // 0000 1111
+#else
+  so_addr(0xF00F);    // 1111 0000 0000 1111
+#endif
   while (1) {
-    // if counter is zero, wait for button-press and ...
-    while (!counter) {
+    // if d.counter.byte1 is zero, wait for button-press and ...
+    while (!d.counter.byte1) {
       __asm__("SLEEP");
     }
     // ... display and increment and wait some time
-    so_byte(counter++);
+#ifdef SO_BYTE
+    so_byte(d.counter.byte1++);
+#else
+    so_addr(d.addr);
+    d.counter.byte1++;
+    d.counter.byte2 = ~d.counter.byte1;
+#endif
     delay_ms(250);
   }
 }

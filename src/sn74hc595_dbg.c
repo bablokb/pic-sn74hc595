@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------
-// SN74HC595 based debugger for the PIC12F675
+// SN74HC595 based debugger for the PIC12-family
 //
 // A simple SN74HC595-based "debugger" which only uses two pins to shift-out
 // 8 or 16 bits. Connected to the SN74HC595 are LEDs to display the data.
@@ -18,7 +18,7 @@
 // --------------------------------------------------------------------------
 
 #define NO_BIT_DEFINES
-#include <pic12f675.h>
+#include <pic14regs.h>
 #include <stdint.h>
 
 #include "shift_lib.h"
@@ -38,9 +38,14 @@ static union {
 // MCLR on, Power on Timer, no WDT, int-oscillator, 
 // no brown out
 
+#ifdef __SDCC_PIC12F675
 __code uint16_t __at (_CONFIG) __configword = 
   _MCLRE_ON & _PWRTE_ON & _WDT_OFF & _INTRC_OSC_NOCLKOUT & _BODEN_OFF;
-
+#elif __SDCC_PIC12F1840
+__code uint16_t __at (_CONFIG1) __configword1 =
+  _MCLRE_ON & _PWRTE_ON & _WDTE_OFF & _CLKOUTEN_OFF & _BOREN_OFF & _FOSC_INTOSC;
+__code uint16_t __at (_CONFIG2) __configword2 = _LVP_OFF & _DEBUG_OFF;
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 // Intialize registers

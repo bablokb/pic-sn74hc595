@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------
-// SN74HC595 based debugger for the PIC12F675
+// SN74HC595 based debugger for the PIC12-family
 //
 // Author: Bernhard Bablok
 // https://github.com/bablokb/pic-sn74hc595
@@ -11,10 +11,10 @@
 // --------------------------------------------------------------------------
 // setup hardware for pins
 void so_init() {
-  PIN_DATA_TRISIO = 0;
-  PIN_CLK_TRISIO  = 0;
-  PIN_DATA        = 0;
-  PIN_CLK         = 0;
+  GP_DATA_TRISIO = 0;
+  GP_CLK_TRISIO  = 0;
+  GP_DATA        = 0;
+  GP_CLK         = 0;
 }
 
 // --------------------------------------------------------------------------
@@ -26,12 +26,12 @@ void so_byte(uint8_t data) {
 
   // write data to shift-register
   for (i=7;i<255;i--) {
-    PIN_DATA = ((data>>i)&0x1);   // write bit value
-    PIN_CLK  = 1;                 // toggle clock pin
-    PIN_CLK  = 0;
+    GP_DATA = ((data>>i)&0x1);   // write bit value
+    GP_CLK  = 1;                 // toggle clock pin
+    GP_CLK  = 0;
   }
-  PIN_CLK  = 1;                   // toggle clock pin
-  PIN_CLK  = 0;
+  GP_CLK  = 1;                   // toggle clock pin
+  GP_CLK  = 0;
 }
 #endif
 
@@ -45,11 +45,11 @@ void so_addr(uint16_t data) {
 
   // write data to shift-register
   for (i=16;i<255;i--) {
-    PIN_DATA = ((data>>i)&0x1);   // write bit value
-    PIN_CLK  = 1;                 // toggle clock pin
-    PIN_CLK  = 0;
+    GP_DATA = ((data>>i)&0x1);   // write bit value
+    GP_CLK  = 1;                 // toggle clock pin
+    GP_CLK  = 0;
   }
-  PIN_CLK  = 1;                   // toggle clock pin
-  PIN_CLK  = 0;
+  GP_CLK  = 1;                   // toggle clock pin
+  GP_CLK  = 0;
 }
 #endif

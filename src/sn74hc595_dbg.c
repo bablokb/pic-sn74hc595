@@ -17,7 +17,6 @@
 //
 // --------------------------------------------------------------------------
 
-#define NO_BIT_DEFINES
 #include <pic14regs.h>
 #include <stdint.h>
 
@@ -35,15 +34,33 @@ static union {
   } counter;
 } d;
 
+#ifdef __SDCC_PIC12F675
+  #undef RP0
+#elif __SDCC_PIC12F683
+  #define CMCON      CMCON0
+  #define _BODEN_OFF _BOD_OFF
+#elif __SDCC_PIC12F1840
+  #define CMCON    CM1CON0
+  #define ANSEL    ANSELA
+  #define TRISIO   TRISA
+  #define GPIO     PORTA
+  #define GP5      RA5
+  #define WPU      WPUA
+  #define IOC      IOCAN
+  #define GPIE     IOCIE
+  #define GPIF     IOCIF
+  #define NOT_GPPU NOT_WPUEN
+ #endif
+
 // MCLR on, Power on Timer, no WDT, int-oscillator, 
 // no brown out
 
-#ifdef __SDCC_PIC12F675
+#if defined __SDCC_PIC12F675 || defined __SDCC_PIC12F683
 __code uint16_t __at (_CONFIG) __configword = 
-  _MCLRE_ON & _PWRTE_ON & _WDT_OFF & _INTRC_OSC_NOCLKOUT & _BODEN_OFF;
+  _MCLRE_OFF & _PWRTE_ON & _WDT_OFF & _INTRC_OSC_NOCLKOUT & _BODEN_OFF;
 #elif __SDCC_PIC12F1840
 __code uint16_t __at (_CONFIG1) __configword1 =
-  _MCLRE_ON & _PWRTE_ON & _WDTE_OFF & _CLKOUTEN_OFF & _BOREN_OFF & _FOSC_INTOSC;
+  _MCLRE_OFF & _PWRTE_ON & _WDTE_OFF & _CLKOUTEN_OFF & _BOREN_OFF & _FOSC_INTOSC;
 __code uint16_t __at (_CONFIG2) __configword2 = _LVP_OFF & _DEBUG_OFF;
 #endif
 
@@ -53,6 +70,10 @@ __code uint16_t __at (_CONFIG2) __configword2 = _LVP_OFF & _DEBUG_OFF;
 static void init(void) {
   // configure registers
 
+#ifdef __SDCC_PIC12F1840
+  OSCCONbits.IRCF = 0b1101;                 // run at 4MHz
+#endif
+
   __asm__ ("CLRWDT");            // clear WDT even if WDT is disabled
   ANSEL  = 0;                    // no analog input
   CMCON  = 0x07;                 // disable comparator for GP0-GP2
@@ -60,20 +81,20 @@ static void init(void) {
   WPU    = 0b100000;             // weak pullups enable on GP5
   IOC    = 0b100000;             // IOC on GP5
 
-  GPIObits.GP5            = 0;   // initial value of GP5
+  GP5      = 0;   // initial value of GP5
 
-  OPTION_REGbits.NOT_GPPU = 0;   // enable pullups
-  GPIO                    = 0;
-  INTCON                  = 0;   // clear interrupt flag bits
-  INTCONbits.GPIE         = 1;   // enable IOC
-  INTCONbits.GIE          = 1;   // global interrupt enable
+  NOT_GPPU = 0;   // enable pullups
+  GPIO     = 0;
+  INTCON   = 0;   // clear interrupt flag bits
+  GPIE     = 1;   // enable IOC
+  GIE      = 1;   // global interrupt enable
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Interrupt service routine
 
 static void isr(void) __interrupt 0 {
-  if (INTCONbits.GPIF) {                  // interrupt-on-change
+  if (GPIF) {                  // interrupt-on-change
     // just wait a bit to debounce
     delay_ms(250);
     if (d.counter.byte1) {   // active: stop counting
@@ -81,13 +102,17 @@ static void isr(void) __interrupt 0 {
     } else {         // waiting: start counting
       d.counter.byte1 = 1;
     }
-    INTCONbits.GPIF = 0;                  // clear IOC interrupt flag
+    GPIF = 0;                  // clear IOC interrupt flag
+#ifdef __SDCC_PIC12F1840
+    IOCAF = 0;
+#endif
   }
 }
 
 // --- main program   --------------------------------------------------------
 
 void main(void) {
+#ifdef __SDCC_PIC12F675
   // Load calibration
   __asm
     bsf  STATUS, RP0
@@ -95,6 +120,7 @@ void main(void) {
     movwf OSCCAL  ; set  value
     bcf  STATUS, RP0
   __endasm;
+#endif
 
   d.addr = 0;
   init();

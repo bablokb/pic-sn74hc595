@@ -7,7 +7,6 @@
 ; https://github.com/bablokb/pic-sn74hc595
 ;
 ; --------------------------------------------------------------------------
-#include   <p12f675.inc>
 
         global _delay_ms
 

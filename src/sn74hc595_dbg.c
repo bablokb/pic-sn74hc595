@@ -4,10 +4,11 @@
 // A simple SN74HC595-based "debugger" which only uses two pins to shift-out
 // 8 or 16 bits. Connected to the SN74HC595 are LEDs to display the data.
 //
-// The sample program uses a button on GP5. After intitialization,
-// the leds should display '0000 1111'. The button toggles a counter showing
-// all values from 1 to 255. When pressed again or when the counter wraps
-// around to zero, the counting stops again.
+// The sample program uses a button on GP5 (configurable with PIN_BTN).
+// After intitialization, the leds should display '0000 1111'.
+// The button toggles a counter showing all values from 1 to 255. When
+// pressed again or when the counter wraps around to zero, the counting
+// stops again.
 //
 // If you chain two SN74HC595 together and #define SO_ADDR instead of
 // SO_BYTE, the sample program will output ~counter,counter.
@@ -23,8 +24,10 @@
 #include "shift_lib.h"
 #include "delay.h"
 
-// build with:
-// make build
+#ifndef PIN_BTN
+  #define PIN_BTN 5
+#endif
+#define GP_BTN _CONCAT(GP,PIN_BTN)      // GP defined in shift_lib.h
 
 static union {
   uint16_t addr;
@@ -77,11 +80,11 @@ static void init(void) {
   __asm__ ("CLRWDT");            // clear WDT even if WDT is disabled
   ANSEL  = 0;                    // no analog input
   CMCON  = 0x07;                 // disable comparator for GP0-GP2
-  TRISIO = 0b100000;             // GP5 is input
-  WPU    = 0b100000;             // weak pullups enable on GP5
-  IOC    = 0b100000;             // IOC on GP5
+  TRISIO = 1 << PIN_BTN;         // GP_BTN is input
+  WPU    = TRISIO;               // weak pullups enable on GP_BTN
+  IOC    = TRISIO;               // IOC on GP_BTN
 
-  GP5      = 0;   // initial value of GP5
+  GP_BTN   = 0;   // initial value of GP5
 
   NOT_GPPU = 0;   // enable pullups
   GPIO     = 0;
@@ -101,6 +104,7 @@ static void isr(void) __interrupt 0 {
       d.counter.byte1 = 0;
     } else {         // waiting: start counting
       d.counter.byte1 = 1;
+      d.counter.byte2 = ~d.counter.byte1;
     }
     GPIF = 0;                  // clear IOC interrupt flag
 #ifdef __SDCC_PIC12F1840
@@ -136,6 +140,7 @@ void main(void) {
       __asm__("SLEEP");
     }
     // ... display and increment and wait some time
+    GIE = 0;   // global interrupt disable
 #ifdef SO_BYTE
     so_byte(d.counter.byte1++);
 #else
@@ -143,6 +148,7 @@ void main(void) {
     d.counter.byte1++;
     d.counter.byte2 = ~d.counter.byte1;
 #endif
+    GIE = 1;   // global interrupt enable
     delay_ms(250);
   }
 }

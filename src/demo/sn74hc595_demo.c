@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------
-// SN74HC595 based debugger for the PIC12-family
+// Demo-program for the SN74HC595
 //
 // A simple SN74HC595-based "debugger" which only uses two pins to shift-out
 // 8 or 16 bits. Connected to the SN74HC595 are LEDs to display the data.
@@ -13,12 +13,15 @@
 // If you chain two SN74HC595 together and #define SO_ADDR instead of
 // SO_BYTE, the sample program will output ~counter,counter.
 //
+// You can find a pcb for the shift-register in the sn74hc595.kicad
+// directory of this project.
+//
 // Author: Bernhard Bablok
 // https://github.com/bablokb/pic-sn74hc595
 //
 // --------------------------------------------------------------------------
 
-#include <pic14regs.h>
+#include "picconfig.h"
 #include <stdint.h>
 
 #include "shift_lib.h"
@@ -27,7 +30,7 @@
 #ifndef PIN_BTN
   #define PIN_BTN 5
 #endif
-#define GP_BTN _CONCAT(GP,PIN_BTN)      // GP defined in shift_lib.h
+#define GP_BTN _CONCAT(GP,PIN_BTN)
 
 static union {
   uint16_t addr;
@@ -37,45 +40,13 @@ static union {
   } counter;
 } d;
 
-#ifdef __SDCC_PIC12F675
-  #undef RP0
-#elif __SDCC_PIC12F683
-  #define CMCON      CMCON0
-  #define _BODEN_OFF _BOD_OFF
-#elif __SDCC_PIC12F1840
-  #define CMCON    CM1CON0
-  #define ANSEL    ANSELA
-  #define TRISIO   TRISA
-  #define GPIO     PORTA
-  #define GP5      RA5
-  #define WPU      WPUA
-  #define IOC      IOCAN
-  #define GPIE     IOCIE
-  #define GPIF     IOCIF
-  #define NOT_GPPU NOT_WPUEN
- #endif
-
-// MCLR on, Power on Timer, no WDT, int-oscillator, 
-// no brown out
-
-#if defined __SDCC_PIC12F675 || defined __SDCC_PIC12F683
-__code uint16_t __at (_CONFIG) __configword = 
-  _MCLRE_OFF & _PWRTE_ON & _WDT_OFF & _INTRC_OSC_NOCLKOUT & _BODEN_OFF;
-#elif __SDCC_PIC12F1840
-__code uint16_t __at (_CONFIG1) __configword1 =
-  _MCLRE_OFF & _PWRTE_ON & _WDTE_OFF & _CLKOUTEN_OFF & _BOREN_OFF & _FOSC_INTOSC;
-__code uint16_t __at (_CONFIG2) __configword2 = _LVP_OFF & _DEBUG_OFF;
-#endif
+CONFIG_WORDS
 
 ////////////////////////////////////////////////////////////////////////
 // Intialize registers
 
 static void init(void) {
   // configure registers
-
-#ifdef __SDCC_PIC12F1840
-  OSCCONbits.IRCF = 0b1101;                 // run at 4MHz
-#endif
 
   __asm__ ("CLRWDT");            // clear WDT even if WDT is disabled
   ANSEL  = 0;                    // no analog input
@@ -91,6 +62,23 @@ static void init(void) {
   INTCON   = 0;   // clear interrupt flag bits
   GPIE     = 1;   // enable IOC
   GIE      = 1;   // global interrupt enable
+
+#ifdef __SDCC_PIC12F675
+  // Load calibration
+  __asm
+    bsf  STATUS, RP0
+    call 0x3ff    ; read value
+    movwf OSCCAL  ; set  value
+    bcf  STATUS, RP0
+  __endasm;
+#elif defined __SDCC_PIC12F683
+  OSCCONbits.IRCF = 0b110;
+#elif defined __SDCC_PIC12F1840
+  OSCCONbits.IRCF = 0b1101;                 // run at 4MHz
+#elif defined __SDCC_PIC12F1612
+  OSCCONbits.IRCF = 0b1101;                 // run at 4MHz
+#endif
+
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -107,25 +95,12 @@ static void isr(void) __interrupt 0 {
       d.counter.byte2 = ~d.counter.byte1;
     }
     GPIF = 0;                  // clear IOC interrupt flag
-#ifdef __SDCC_PIC12F1840
-    IOCAF = 0;
-#endif
   }
 }
 
 // --- main program   --------------------------------------------------------
 
 void main(void) {
-#ifdef __SDCC_PIC12F675
-  // Load calibration
-  __asm
-    bsf  STATUS, RP0
-    call 0x3ff    ; read value
-    movwf OSCCAL  ; set  value
-    bcf  STATUS, RP0
-  __endasm;
-#endif
-
   d.addr = 0;
   init();
   so_init();

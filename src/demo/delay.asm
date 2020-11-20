@@ -1,5 +1,5 @@
 ; --------------------------------------------------------------------------
-; SN74HC595 based debugger for the PIC12F675
+; Demo-program for the SN74HC595
 ;
 ; Definition of delay-functions
 ; 

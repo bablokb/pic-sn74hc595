@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------
-// SN74HC595 based debugger for the PIC12-family
+// SN74HC595 driver
 //
 // Author: Bernhard Bablok
 // https://github.com/bablokb/pic-sn74hc595
@@ -10,11 +10,12 @@
 
 // --------------------------------------------------------------------------
 // setup hardware for pins
+
 void so_init() {
-  GP_DATA_TRISIO = 0;
-  GP_CLK_TRISIO  = 0;
-  GP_DATA        = 0;
-  GP_CLK         = 0;
+  TRISIO  &= ~(1<<PIN_SR_DATA);
+  TRISIO  &= ~(1<<PIN_SR_CLK);
+  GP_DATA  = 0;
+  GP_CLK   = 0;
 }
 
 // --------------------------------------------------------------------------

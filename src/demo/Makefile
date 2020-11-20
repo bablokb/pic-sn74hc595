@@ -7,8 +7,8 @@
 # 
 # --------------------------------------------------------------------------
 
-PIN_SR_CLK=1
-PIN_SR_DATA=2
+PIN_SR_CLK=2
+PIN_SR_DATA=1
 PIN_BTN=5
 OTYPE=BYTE
 #OTYPE=ADDR

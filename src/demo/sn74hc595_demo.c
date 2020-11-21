@@ -52,16 +52,13 @@ static void init(void) {
   ANSEL  = 0;                    // no analog input
   CMCON  = 0x07;                 // disable comparator for GP0-GP2
   TRISIO = 1 << PIN_BTN;         // GP_BTN is input
-  WPU    = TRISIO;               // weak pullups enable on GP_BTN
-  IOC    = TRISIO;               // IOC on GP_BTN
-
-  GP_BTN   = 0;   // initial value of GP5
+  WPU    = 1 << PIN_BTN;         // weak pullups enable on GP_BTN
+  IOC    = 1 << PIN_BTN;         // IOC on GP_BTN
 
   NOT_GPPU = 0;   // enable pullups
   GPIO     = 0;
   INTCON   = 0;   // clear interrupt flag bits
   GPIE     = 1;   // enable IOC
-  GIE      = 1;   // global interrupt enable
 
 #ifdef __SDCC_PIC12F675
   // Load calibration
@@ -94,7 +91,11 @@ static void isr(void) __interrupt 0 {
       d.counter.byte1 = 1;
       d.counter.byte2 = ~d.counter.byte1;
     }
+#if defined __SDCC_PIC12F1612
+    IOCAF = 0;                // clear IOC interrupt flag
+#else
     GPIF = 0;                  // clear IOC interrupt flag
+#endif
   }
 }
 
@@ -104,16 +105,20 @@ void main(void) {
   d.addr = 0;
   init();
   so_init();
+
 #ifdef SO_BYTE
   so_byte(0x0F);      // 0000 1111
 #else
   so_addr(0xF00F);    // 1111 0000 0000 1111
 #endif
+
+  GIE = 1;   // global interrupt enable
   while (1) {
     // if d.counter.byte1 is zero, wait for button-press and ...
     while (!d.counter.byte1) {
       __asm__("SLEEP");
     }
+
     // ... display and increment and wait some time
     GIE = 0;   // global interrupt disable
 #ifdef SO_BYTE

@@ -22,6 +22,6 @@ SDCC_ARGS=-DSO_$(OTYPE) -DPIN_SR_CLK=$(PIN_SR_CLK) \
                         -DPIN_SR_DATA=$(PIN_SR_DATA) \
                         -DPIN_BTN=$(PIN_BTN)
 
-include ../rules.inc
+include ptc_rules.inc
 
 # --------------------------------------------------------------------------

@@ -25,3 +25,5 @@ library and the example application is in the directory `src`. Note that
 you need sdcc and gputils to compile and link the files, but porting
 to a different toolchain should be simple.
 
+You also need the header-files and makefile rules of my
+[pic-toolchain](https://github.com/bablokb/pic-toolchain)-project.

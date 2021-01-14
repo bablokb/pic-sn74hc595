@@ -60,22 +60,8 @@ static void init(void) {
   INTCON   = 0;   // clear interrupt flag bits
   GPIE     = 1;   // enable IOC
 
-#ifdef __SDCC_PIC12F675
-  // Load calibration
-  __asm
-    bsf  STATUS, RP0
-    call 0x3ff    ; read value
-    movwf OSCCAL  ; set  value
-    bcf  STATUS, RP0
-  __endasm;
-#elif defined __SDCC_PIC12F683
-  OSCCONbits.IRCF = 0b110;
-#elif defined __SDCC_PIC12F1840
-  OSCCONbits.IRCF = 0b1101;                 // run at 4MHz
-#elif defined __SDCC_PIC12F1612
-  OSCCONbits.IRCF = 0b1101;                 // run at 4MHz
-#endif
-
+  INIT_SPECIAL;
+  CLOCK_4MHZ;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -91,7 +77,7 @@ static void isr(void) __interrupt 0 {
       d.counter.byte1 = 1;
       d.counter.byte2 = ~d.counter.byte1;
     }
-#if defined __SDCC_PIC12F1612
+#ifdef __12F1612
     IOCAF = 0;                // clear IOC interrupt flag
 #else
     GPIF = 0;                  // clear IOC interrupt flag

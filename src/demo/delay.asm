@@ -7,17 +7,18 @@
 ; https://github.com/bablokb/pic-sn74hc595
 ;
 ; --------------------------------------------------------------------------
+#include "picconfig.inc"
 
         global _delay_ms
 
-        udata_ovr
-count	res 1
-count2	res 1
+PSECT udata_bank0
+count:  DS 1
+count2: DS 1
 
-        code
+PSECT   code
 
 ; --------------------------------------------------------------------------
-_delay_1000
+_delay_1000:
         ;; cycle calculation:
         ;; - call:                         2
         ;; - init1:                        2
@@ -25,17 +26,17 @@ _delay_1000
         ;; - last:  (2+2)                  4
         ;; - return                        2
         
-       	movlw D'199'
+       	movlw 0xC7              ; D'199'
 	movwf count
 
-d_1000  goto $+1
+d_1000: goto $+1
         decfsz count, 1
         goto d_1000
 
         return
 
 ; --------------------------------------------------------------------------
-_delay_ms
+_delay_ms:
         ;; cycle calculation:
         ;; - call:                         2
         ;; - init:                         1
@@ -46,7 +47,7 @@ _delay_ms
         
         movwf count2
 
-d_ms    call _delay_1000
+d_ms:   call _delay_1000
         decfsz count2, 1
         goto d_ms
 

@@ -53,7 +53,7 @@ static void init(void) {
   CMCON  = 0x07;                 // disable comparator for GP0-GP2
   TRISIO = 1 << PIN_BTN;         // GP_BTN is input
   WPU    = 1 << PIN_BTN;         // weak pullups enable on GP_BTN
-  IOC    = 1 << PIN_BTN;         // IOC on GP_BTN
+  IOC_ENABLE(PIN_BTN,A,IOC_NEG_EDGE);
 
   NOT_GPPU = 0;   // enable pullups
   GPIO     = 0;
@@ -77,11 +77,7 @@ static void isr(void) __interrupt 0 {
       d.counter.byte1 = 1;
       d.counter.byte2 = ~d.counter.byte1;
     }
-#ifdef __12F1612
-    IOCAF = 0;                // clear IOC interrupt flag
-#else
-    GPIF = 0;                  // clear IOC interrupt flag
-#endif
+    IOC_CLEAR(PIN_BTN,A)
   }
 }
 

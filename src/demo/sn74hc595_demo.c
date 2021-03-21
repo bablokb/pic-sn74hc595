@@ -30,7 +30,7 @@
 #ifndef PIN_BTN
   #define PIN_BTN 5
 #endif
-#define GP_BTN _CONCAT(GP,PIN_BTN)
+#define GP_BTN _CONCAT(RA,PIN_BTN)
 
 static union {
   uint16_t addr;
@@ -49,16 +49,16 @@ static void init(void) {
   // configure registers
 
   __asm__ ("CLRWDT");            // clear WDT even if WDT is disabled
-  ANSEL  = 0;                    // no analog input
-  CMCON  = 0x07;                 // disable comparator for GP0-GP2
-  TRISIO = 1 << PIN_BTN;         // GP_BTN is input
-  WPU    = 1 << PIN_BTN;         // weak pullups enable on GP_BTN
+  ANSELA  = 0;                   // no analog input
+  CM1CON0 = 0x07;                // disable comparator for GP0-GP2
+  TRISA   = 1 << PIN_BTN;        // GP_BTN is input
+  WPUA    = 1 << PIN_BTN;        // weak pullups enable on GP_BTN
   IOC_ENABLE(PIN_BTN,A,IOC_NEG_EDGE);
 
   NOT_GPPU = 0;   // enable pullups
-  GPIO     = 0;
+  PORTA    = 0;
   INTCON   = 0;   // clear interrupt flag bits
-  GPIE     = 1;   // enable IOC
+  IOCIE    = 1;   // enable IOC
 
   INIT_SPECIAL;
   CLOCK_4MHZ;
@@ -68,7 +68,7 @@ static void init(void) {
 // Interrupt service routine
 
 static void isr(void) __interrupt 0 {
-  if (GPIF) {                  // interrupt-on-change
+  if (IOCIF) {               // interrupt-on-change
     // just wait a bit to debounce
     delay_ms(250);
     if (d.counter.byte1) {   // active: stop counting
@@ -110,7 +110,7 @@ void main(void) {
     d.counter.byte1++;
     d.counter.byte2 = ~d.counter.byte1;
 #endif
-    GIE = 1;   // global interrupt enable
+    IOCIE = 1;   // global interrupt enable
     delay_ms(250);
   }
 }

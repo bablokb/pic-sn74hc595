@@ -12,8 +12,8 @@
 // setup hardware for pins
 
 void so_init() {
-  TRISIO  &= ~(1<<PIN_SR_DATA);
-  TRISIO  &= ~(1<<PIN_SR_CLK);
+  TRISA   &= ~(1<<PIN_SR_DATA);
+  TRISA   &= ~(1<<PIN_SR_CLK);
   GP_DATA  = 0;
   GP_CLK   = 0;
 }

@@ -16,12 +16,12 @@
 #ifndef PIN_SR_CLK
   #define PIN_SR_CLK 1
 #endif
-#define GP_CLK     _CONCAT(GP,PIN_SR_CLK)      // Serial clock pin
+#define GP_CLK     _CONCAT(RA,PIN_SR_CLK)      // Serial clock pin
 
 #ifndef PIN_SR_DATA
   #define PIN_SR_DATA 2
 #endif
-#define GP_DATA    _CONCAT(GP,PIN_SR_DATA)     // Serial data pin
+#define GP_DATA    _CONCAT(RA,PIN_SR_DATA)     // Serial data pin
 
   // Function Declarations
   void so_init(void);
